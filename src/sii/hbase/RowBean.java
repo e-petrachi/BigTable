@@ -7,7 +7,7 @@ import java.util.Map;
 public class RowBean implements Serializable{
 
     private static final long serialVersionUID = 1L;
-    private String table;
+    private String tableName;
     private String rowKey;
     private Map<String, String> rowContent;
 
@@ -15,17 +15,17 @@ public class RowBean implements Serializable{
         super();
     }
 
-    public RowBean(String rowKey, String table, Map<String, String> rowContent) {
+    public RowBean(String rowKey, String tableName, Map<String, String> rowContent) {
         super();
         this.rowKey = rowKey;
-        this.table = table;
+        this.tableName = tableName;
         this.rowContent = rowContent;
     }
 
-    public RowBean(String rowKey, String table) {
+    public RowBean(String rowKey, String tableName) {
         super();
         this.rowKey = rowKey;
-        this.table = table;
+        this.tableName = tableName;
         this.rowContent = new HashMap<String, String>();
     }
 
@@ -37,15 +37,22 @@ public class RowBean implements Serializable{
 
     @Override
     public String toString() {
-        return "RowBean [tableName=" + table + ", rowKey=" + rowKey + ", rowContent=" + rowContent + "]";
+        String s = "";
+        s = s + "RowBean [ \n\t TableName= " + tableName + "\n\t RowKey= " + rowKey + "\n\t RowContent= {";
+        for (String row: rowContent.keySet()) {
+            s = s + "\n\t\t" + row + " \t" + rowContent.get(row);
+        }
+        s = s + "\n\t }\n ]";
+
+        return s;
     }
 
     public String getTable() {
-        return table;
+        return tableName;
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public void setTable(String tableName) {
+        this.tableName = tableName;
     }
 
     public String getRowKey() {

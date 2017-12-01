@@ -4,10 +4,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.KeyValue;
 
@@ -15,10 +13,10 @@ import java.io.IOException;
 
 public class HBaseWrapper {
 
-    // TODO verificare perchè Zookeeper funziona lentamente
-
-    public HTable getTable(Configuration config, String name){
+    public HTable getTable(String name){
+        Configuration config = HBaseConfiguration.create();
         HTable table = null;
+
         try  {
             table = new HTable(config, name);
         } catch (IOException e){
@@ -46,13 +44,47 @@ public class HBaseWrapper {
         return true;
     }
 
-    public Boolean deleteRecord(String tableName, String rowKey){
-        // TODO implementare
-        return false;
+    public Boolean deleteRecord(HTable table, String rowKey){
+        byte[] row = rowKey.getBytes();
+        Delete delete = new Delete(row);
+
+        try {
+            table.delete(delete);
+        } catch (IOException e) {
+            System.out.println("Errore nell'eliminazione del record dalla Tabella: " + e.getMessage());
+            return false;
+        }
+        return true;
     }
 
-    public RowBean getOneRecord(String tableName, String rowKey){
-        // TODO implementare
-        return null;
+    public RowBean getOneRecord(HTable table, String rowKey){
+        byte[] row = rowKey.getBytes();
+        Get get = new Get(row);
+
+        Result result = null;
+        try {
+            result = table.get(get);
+        } catch (IOException e) {
+            System.out.println("Errore nella ricerca del record nella Tabella: " + e.getMessage());
+            return null;
+        }
+
+        String tableName = new String(table.getTableName());
+
+        RowBean rowBean = new RowBean(rowKey, tableName);
+        for(KeyValue kv : result.raw()) {
+            rowBean.addRowContent(new String(kv.getFamily()),
+                                    new String(kv.getQualifier()),
+                                    new String(kv.getValue()));
+        }
+        return rowBean;
+    }
+
+    public void closeTable(HTable table){
+        try{
+            table.close();
+        } catch (IOException e){
+            System.out.println("Errore nella chiusura dalla Tabella: " + e.getMessage());
+        }
     }
 }
