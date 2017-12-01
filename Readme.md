@@ -61,7 +61,8 @@ Passi preliminari:
 11. Avviare il main del progetto che popolerà la nuova tabella del database inserendo dati casuali 
 ed in seguito li preleverà stampandone i contenuti; dopo cercherà una determinata riga, la stamperà 
 a video, proverà ad eliminarla e ristamperà l'intero contenuto della tabella evidenziando il fatto 
-che si a stata effettivamente eliminata.
+che sia stata effettivamente eliminata.
+
 12. Stoppare il demone come segue:
 
      ```sh
